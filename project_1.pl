@@ -71,10 +71,32 @@ interpretation(A or B, false):-
   interpretation(B, false).
 
 interpretation(A implies B, true):-
-  interpretation(not (A and not B), true).
+  interpretation(A, true),
+  interpretation(B, true).
+
+interpretation(A implies B, true):-
+  interpretation(A, false),
+  interpretation(B, true).
+
+interpretation(A implies B, true):-
+  interpretation(A, false),
+  interpretation(B, false).
+
+interpretation(A implies B, false):-
+  interpretation(A, true),
+  interpretation(B, false).
 
 interpretation(A xor B, true):-
   interpretation((A and not B) or ((not A) and B), true).
+
+interpretation(A xor B, false):-
+  interpretation(A, true),
+  interpretation(B, true).
+
+interpretation(A xor B, false):-
+  interpretation(A, false),
+  interpretation(B, false).
+  
 
 % interpretation(top and top, true). % should succeeds.
 
@@ -241,5 +263,52 @@ assignment(Formula, TruthValue, [[FirstProp, Value]| ListofAssign]):-
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-
-% F = not y xor x and z, assignment(F, T, L)
+% assignment(x1 and x2, true, L)
+% should succeed with L = [[x1, true], [x2, true]].
+%
+% assignment(x1 or x2, false, [[x1, false], [x2, false]])
+% should succeed.
+%
+% assignment(not (x1 and not x2), false, L)
+% should succeed with L = [[x1, true], [x2, false]].
+%
+% assignment(x1 implies x2, T, L)
+% should succeed with:
+%   T = true
+%   L = [[x1, true], [x2, true]]
+%   T = false
+%   L = [[x1, true], [x2, false]]
+%   T = true
+%   L = [[x1, false], [x2, true]]
+%   T = true
+%   L = [[x1, false], [x2, false]]
+%
+% assignment(x xor y, T, L)
+% should succeed with:
+%   T = true
+%   L = [[x, true], [y, false]]
+%   T = true
+%   L = [[x, false], [y, true]]
+%   T = false
+%   L = [[x, true], [y, true]]
+%   T = false
+%   L = [[x, false], [y, false]]
+%
+% assignment(not y xor x and z, T, L)
+% should succeed with:
+%   T = true
+%   L = [[y, true], [x, true], [z, true]]
+%   T = false
+%   L = [[y, true], [x, true], [z, false]]
+%   T = false
+%   L = [[y, true], [x, false], [z, true]]
+%   T = false
+%   L = [[y, true], [x, false], [z, false]]
+%   T = false
+%   L = [[y, false], [x, true], [z, true]]
+%   T = false
+%   L = [[y, false], [x, true], [z, false]]
+%   T = true
+%   L = [[y, false], [x, false], [z, true]]
+%   T = false
+%   L = [[y, false], [x, false], [z, false]]
